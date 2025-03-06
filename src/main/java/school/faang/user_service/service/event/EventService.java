@@ -26,12 +26,13 @@ public class EventService {
 
     public EventDto create(EventDto eventDto) {
         Event event = eventMapper.toEntity(eventDto);
-        if(hasNoRelatedSkill(event)) {
+        if (hasNoRelatedSkill(event)) {
             log.warn("Пользователь {} пытается создать событие, но у него не хватает навыков",
                     event.getOwner().getUsername());
             throw new DataValidationException("Попытка создания события пользователем без требуемых навыков");
         }
         event = eventRepository.save(event);
+        log.info("Событие {} добавлено!", event.getTitle());
         return eventMapper.toDto(event);
     }
 
@@ -45,10 +46,11 @@ public class EventService {
 
     public List<EventDto> getEventsByFilter(EventFilterDto filter) {
         Stream<Event> filteredEvents = eventRepository.findAll().stream();
-        for (EventFilter eventFilter : eventFilters)
+        for (EventFilter eventFilter : eventFilters) {
             if (eventFilter.isApplicable(filter)) {
                 filteredEvents = eventFilter.apply(filteredEvents, filter);
             }
+        }
         return filteredEvents.map(eventMapper::toDto).toList();
     }
 
@@ -64,7 +66,7 @@ public class EventService {
         }
         Event event = eventRepository.findById(eventDto.getId())
                 .orElseThrow(() -> new DataValidationException("Передан неверный ID события"));
-        if(hasNoRelatedSkill(event)) {
+        if (hasNoRelatedSkill(event)) {
             log.warn("Пользователь {} пытается обновить событие, но у него не хватает навыков",
                     event.getOwner().getUsername());
             throw new DataValidationException("Попытка обновления события пользователем без требуемых навыков");
@@ -75,8 +77,7 @@ public class EventService {
     }
 
     public List<EventDto> getOwnedEvents(Long userId) {
-        List<Event> filteredByOwnerEvents = eventRepository.findAllByUserId(userId);
-        return filteredByOwnerEvents.stream().map(eventMapper::toDto).toList();
+        return eventRepository.findAllByUserId(userId).stream().map(eventMapper::toDto).toList();
     }
 
     public List<EventDto> getParticipatedEvents(Long userId) {
