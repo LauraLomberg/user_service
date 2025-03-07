@@ -6,10 +6,12 @@ import org.springframework.stereotype.Service;
 import school.faang.user_service.dto.EventDto;
 import school.faang.user_service.dto.EventFilterDto;
 import school.faang.user_service.entity.Skill;
+import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.filter.EventFilter;
 import school.faang.user_service.mapper.EventMapper;
+import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.repository.event.EventRepository;
 
 import java.util.List;
@@ -21,11 +23,20 @@ import java.util.stream.Stream;
 public class EventService {
 
     private final EventRepository eventRepository;
+    private final UserRepository userRepository;
     private final EventMapper eventMapper;
     private final List<EventFilter> eventFilters;
 
     public EventDto create(EventDto eventDto) {
+        if (eventDto.getStartDate() != null && eventDto.getEndDate() != null
+                && eventDto.getStartDate().isAfter(eventDto.getEndDate())) {
+            log.warn("Некорректные даты события: startDate позже endDate");
+            throw new DataValidationException("Дата начала события не может быть позже даты окончания");
+        }
         Event event = eventMapper.toEntity(eventDto);
+        User owner = userRepository.findById(eventDto.getOwnerId())
+                .orElseThrow(() -> new DataValidationException("Пользователь не найден"));
+        event.setOwner(owner);
         if (hasNoRelatedSkill(event)) {
             log.warn("Пользователь {} пытается создать событие, но у него не хватает навыков",
                     event.getOwner().getUsername());
@@ -77,12 +88,15 @@ public class EventService {
     }
 
     public List<EventDto> getOwnedEvents(Long userId) {
-        return eventRepository.findAllByUserId(userId).stream().map(eventMapper::toDto).toList();
+               return eventRepository.findAllByUserId(userId).stream()
+                .map(eventMapper::toDto)
+                .toList();
     }
 
     public List<EventDto> getParticipatedEvents(Long userId) {
-        List<Event> filteredParticipatedEvents = eventRepository.findParticipatedEventsByUserId(userId);
-        return filteredParticipatedEvents.stream().map(eventMapper::toDto).toList();
+                return eventRepository.findParticipatedEventsByUserId(userId).stream()
+                .map(eventMapper::toDto)
+                .toList();
     }
 
     private boolean hasNoRelatedSkill(Event event) {

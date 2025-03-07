@@ -65,7 +65,8 @@ public class EventController {
     }
 
     private boolean isInvalidToCreate(EventDto eventDto) {
-        if (eventDto.getTitle().isBlank() || eventDto.getStartDate() == null || eventDto.getOwnerId() == null) {
+        if (eventDto.getTitle() == null || eventDto.getTitle().isBlank()
+                || eventDto.getStartDate() == null || eventDto.getOwnerId() == null) {
             log.warn("Не пройдена валидация события для создания. Проверьте: название, дату начала и владельца");
             return true;
         }
