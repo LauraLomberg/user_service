@@ -11,6 +11,7 @@ import school.faang.user_service.entity.event.Event;
 import school.faang.user_service.exception.DataValidationException;
 import school.faang.user_service.filter.EventFilter;
 import school.faang.user_service.mapper.EventMapper;
+import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.UserRepository;
 import school.faang.user_service.repository.event.EventRepository;
 
@@ -24,6 +25,7 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final SkillRepository skillRepository;
     private final EventMapper eventMapper;
     private final List<EventFilter> eventFilters;
 
@@ -33,10 +35,10 @@ public class EventService {
             log.warn("Некорректные даты события: startDate позже endDate");
             throw new DataValidationException("Дата начала события не может быть позже даты окончания");
         }
-        Event event = eventMapper.toEntity(eventDto);
         User owner = userRepository.findById(eventDto.getOwnerId())
                 .orElseThrow(() -> new DataValidationException("Пользователь не найден"));
-        event.setOwner(owner);
+        List<Skill> relatedSkills = skillRepository.findAllById(eventDto.getRelatedSkills());
+        Event event = eventMapper.toEntity(eventDto, owner, relatedSkills);
         if (hasNoRelatedSkill(event)) {
             log.warn("Пользователь {} пытается создать событие, но у него не хватает навыков",
                     event.getOwner().getUsername());
@@ -77,12 +79,19 @@ public class EventService {
         }
         Event event = eventRepository.findById(eventDto.getId())
                 .orElseThrow(() -> new DataValidationException("Передан неверный ID события"));
+        User owner = eventDto.getOwnerId() != null ?
+                userRepository.findById(eventDto.getOwnerId())
+                        .orElseThrow(() -> new DataValidationException("Пользователь не найден")) :
+                event.getOwner();
+        List<Skill> relatedSkills = eventDto.getRelatedSkills() != null ?
+                skillRepository.findAllById(eventDto.getRelatedSkills()) :
+                event.getRelatedSkills();
+        eventMapper.update(eventDto, event, owner, relatedSkills);
         if (hasNoRelatedSkill(event)) {
             log.warn("Пользователь {} пытается обновить событие, но у него не хватает навыков",
                     event.getOwner().getUsername());
             throw new DataValidationException("Попытка обновления события пользователем без требуемых навыков");
         }
-        eventMapper.update(eventDto, event);
         Event updatedEvent = eventRepository.save(event);
         return eventMapper.toDto(updatedEvent);
     }
