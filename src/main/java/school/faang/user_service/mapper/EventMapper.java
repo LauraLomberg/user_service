@@ -22,13 +22,13 @@ public interface EventMapper {
     @Mapping(target = "ratings", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    public abstract Event toEntity(EventDto eventDto, User owner, List<Skill> relatedSkills);
+    Event toEntity(EventDto eventDto, User owner, List<Skill> relatedSkills);
 
     @Mapping(source = "owner.id", target = "ownerId")
     @Mapping(target = "relatedSkills", expression = "java(mapRelatedSkillsToIds(event.getRelatedSkills()))")
     @Mapping(source = "type", target = "eventType")
     @Mapping(source = "status", target = "eventStatus")
-    public abstract EventDto toDto(Event event);
+    EventDto toDto(Event event);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(source = "eventDto.eventType", target = "type")
@@ -38,7 +38,7 @@ public interface EventMapper {
     @Mapping(target = "ratings", ignore = true)
     @Mapping(target = "createdAt", ignore = true)
     @Mapping(target = "updatedAt", ignore = true)
-    public abstract void update(EventDto eventDto, @MappingTarget Event event, User owner, List<Skill> relatedSkills);
+    void update(EventDto eventDto, @MappingTarget Event event, User owner, List<Skill> relatedSkills);
 
     default List<Long> mapRelatedSkillsToIds(List<Skill> skills) {
         if (skills == null) {
