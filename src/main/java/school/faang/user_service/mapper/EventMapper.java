@@ -8,7 +8,6 @@ import school.faang.user_service.entity.Skill;
 import school.faang.user_service.entity.User;
 import school.faang.user_service.entity.event.Event;
 
-import java.util.Collections;
 import java.util.List;
 
 @Mapper(componentModel = "spring")
@@ -42,7 +41,7 @@ public interface EventMapper {
 
     default List<Long> mapRelatedSkillsToIds(List<Skill> skills) {
         if (skills == null) {
-            return Collections.emptyList();
+            return null;
         }
         return skills.stream()
                 .map(Skill::getId)

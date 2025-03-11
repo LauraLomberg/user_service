@@ -11,12 +11,12 @@ public class EventLocationFilter implements EventFilter {
 
     @Override
     public boolean isApplicable(EventFilterDto eventFilterDto) {
-        return eventFilterDto.getLocation() != null;
+        return eventFilterDto.getLocation() != null && !eventFilterDto.getLocation().isBlank();
     }
 
     @Override
     public Stream<Event> apply(Stream<Event> events, EventFilterDto eventFilterDto) {
-        return events.filter(event -> event.getLocation().equals(eventFilterDto.getLocation()));
+        return events.filter(event -> event.getLocation().equalsIgnoreCase(eventFilterDto.getLocation()));
     }
 }
 
