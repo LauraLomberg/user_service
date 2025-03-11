@@ -4,6 +4,7 @@ import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import school.faang.user_service.dto.goal.GoalDto;
+import school.faang.user_service.dto.goal.GoalFilterDto;
 import school.faang.user_service.service.goal.GoalService;
 
 import java.util.List;
@@ -32,5 +33,10 @@ public class GoalController {
     @GetMapping(value = "/subtasks/{goalId}")
     public List<GoalDto> findSubtasksByGoalId(@NonNull Long goalId) {
         return goalService.findSubtasksByGoalId(goalId);
+    }
+
+    @GetMapping(value = "/goals/{userId}")
+    public List<GoalDto> getGoalsByUser(@NonNull Long userId, @NonNull GoalFilterDto filter) {
+        return goalService.getGoalsByUserId(userId, filter);
     }
 }
