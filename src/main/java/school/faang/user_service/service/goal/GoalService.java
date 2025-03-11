@@ -1,5 +1,6 @@
 package school.faang.user_service.service.goal;
 
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +46,12 @@ public class GoalService {
     @Transactional
     public void deleteGoal(long goalId) {
         goalRepository.deleteById(goalId);
+    }
+
+    @Transactional
+    public List<GoalDto> findSubtasksByGoalId(@NonNull Long goalId) {
+        List<Goal> goals = goalRepository.findByParent(goalId).toList();
+        return goals.stream().map(goalMapper::toDto).toList();
     }
 
     private void assignSkillsToUsers(Goal goal, GoalDto goalDto) {
