@@ -12,5 +12,6 @@ public interface GoalMapper {
     Goal toEntity(GoalDto goalDto);
 
     @Mapping(source = "skillsToAchieve", target = "skillIds")
+    @Mapping(source = "parentId", target = "parent.id")
     GoalDto toDto(Goal goal);
 }

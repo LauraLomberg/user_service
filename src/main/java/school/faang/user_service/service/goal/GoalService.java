@@ -9,6 +9,7 @@ import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
 import school.faang.user_service.exception.ErrorCode;
 import school.faang.user_service.exception.ValidationException;
+import school.faang.user_service.filter.GoalFilter;
 import school.faang.user_service.mapper.GoalMapper;
 import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.goal.GoalRepository;
@@ -23,25 +24,25 @@ public class GoalService {
     private final GoalRepository goalRepository;
     private final SkillRepository skillRepository;
     private final GoalMapper goalMapper;
+    private final List<GoalFilter> goalFilters;
 
     @Transactional
     public GoalDto createGoal(Long userId, GoalDto goalDto) {
-        Goal goal = findGoal(goalDto.getId());
-        validateGoal(userId, goal);
-        Goal createdGoal = goalRepository.create(goal.getTitle(), goal.getDescription(), goal.getParent().getId());
-        addSkillsToGoal(goalDto.getSkillIds(), goalDto.getId());
+        validateGoal(userId, goalDto);
+        Goal createdGoal = goalRepository.create(goalDto.getTitle(), goalDto.getDescription(), goalDto.getParentId());
+        addSkillsToGoal(goalDto.getSkillIds(), createdGoal.getId());
         return goalMapper.toDto(createdGoal);
     }
 
     @Transactional
     public GoalDto updateGoal(Long userId, GoalDto goalDto) {
-        Goal goal = findGoal(goalDto.getId());
-        validateGoal(userId, goal);
-        if (GoalStatus.COMPLETED.equals(goal.getStatus()) && !goal.getSkillsToAchieve().isEmpty()) {
-            assignSkillsToUsers(goal, goalDto);
+        validateGoal(userId, goalDto);
+        Goal goalToUpdate = findGoal(goalDto.getId());
+        if (GoalStatus.COMPLETED.equals(goalToUpdate.getStatus()) && !goalToUpdate.getSkillsToAchieve().isEmpty()) {
+            assignSkillsToUsers(goalToUpdate, goalDto);
             updateSkills(goalDto);
         }
-        return goalMapper.toDto(goal);
+        return goalMapper.toDto(goalToUpdate);
     }
 
     @Transactional
@@ -66,16 +67,16 @@ public class GoalService {
                 skillRepository.assignSkillToUser(skillId, user.getId())));
     }
 
-    private void validateGoal(Long userId, Goal goal) {
-        if (goal.getTitle() == null || goal.getTitle().isBlank()) {
-            throw new ValidationException(ErrorCode.GOAL_EMPTY_TITLE, String.valueOf(goal.getId()));
+    private void validateGoal(Long userId, GoalDto goalDto) {
+        if (goalDto.getTitle() == null || goalDto.getTitle().isBlank()) {
+            throw new ValidationException(ErrorCode.GOAL_EMPTY_TITLE, String.valueOf(goalDto.getId()));
         }
         if (goalRepository.countActiveGoalsPerUser(userId) > MAX_ACTIVE_GOALS) {
             throw new ValidationException(ErrorCode.MAX_ACTIVE_GOALS, String.valueOf(goalRepository.countActiveGoalsPerUser(userId)));
         }
-        goal.getSkillsToAchieve().forEach(skill -> {
-            if (!skillRepository.existsByTitle(skill.getTitle())) {
-                throw new ValidationException(ErrorCode.GOAL_NON_EXISTING_SKILLS, skill.getTitle());
+        goalDto.getSkillIds().forEach(skillId -> {
+            if (!skillRepository.existsById(skillId)) {
+                throw new ValidationException(ErrorCode.GOAL_NON_EXISTING_SKILLS, skillId.toString());
             }
         });
     }
@@ -95,12 +96,13 @@ public class GoalService {
     }
 
     private List<GoalDto> filterGoals(Stream<Goal> userGoals, GoalFilterDto filter) {
-        return userGoals.filter(goal -> matchesFilter(goal, filter))
+        for (GoalFilter goalFilter : goalFilters) {
+            if (goalFilter.isApplicable(filter)) {
+                userGoals = goalFilter.apply(userGoals, filter);
+            }
+        }
+        return userGoals
                 .map(goalMapper::toDto)
                 .toList();
-    }
-
-    private boolean matchesFilter(Goal goal, GoalFilterDto filter) {
-        return goal.getStatus().equals(filter.getStatus()) && goal.getTitle().equals(filter.getTitle());
     }
 }
