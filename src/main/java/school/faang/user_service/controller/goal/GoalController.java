@@ -16,27 +16,27 @@ public class GoalController {
     private final GoalService goalService;
 
     @PostMapping(value = "/create/{userId}")
-    public GoalDto createGoal(@NonNull Long userId, @NonNull GoalDto goal) {
+    public GoalDto createGoal(@NonNull @PathVariable("userId") Long userId, @NonNull GoalDto goal) {
         return goalService.createGoal(userId, goal);
     }
 
     @PutMapping(value = "/update/{goalId}")
-    public GoalDto updateGoal(@NonNull Long goalId, @NonNull GoalDto goal) {
+    public GoalDto updateGoal(@NonNull @PathVariable("goalId") Long goalId, @NonNull GoalDto goal) {
         return goalService.updateGoal(goalId, goal);
     }
 
     @DeleteMapping(value = "/delete/{goalId}")
-    public void deleteGoal(@NonNull Long goalId) {
+    public void deleteGoal(@NonNull @PathVariable("goalId") Long goalId) {
         goalService.deleteGoal(goalId);
     }
 
     @GetMapping(value = "/subtasks/{goalId}")
-    public List<GoalDto> findSubtasksByGoalId(@NonNull Long goalId) {
+    public List<GoalDto> findSubtasksByGoalId(@NonNull @PathVariable("goalId") Long goalId) {
         return goalService.findSubtasksByGoalId(goalId);
     }
 
     @GetMapping(value = "/goals/{userId}")
-    public List<GoalDto> getGoalsByUser(@NonNull Long userId, @NonNull GoalFilterDto filter) {
+    public List<GoalDto> getGoalsByUser(@NonNull @PathVariable("userId") Long userId, @NonNull GoalFilterDto filter) {
         return goalService.getGoalsByUserId(userId, filter);
     }
 }

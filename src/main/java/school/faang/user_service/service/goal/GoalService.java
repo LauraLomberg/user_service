@@ -72,7 +72,8 @@ public class GoalService {
             throw new ValidationException(ErrorCode.GOAL_EMPTY_TITLE, String.valueOf(goalDto.getId()));
         }
         if (goalRepository.countActiveGoalsPerUser(userId) > MAX_ACTIVE_GOALS) {
-            throw new ValidationException(ErrorCode.MAX_ACTIVE_GOALS, String.valueOf(goalRepository.countActiveGoalsPerUser(userId)));
+            throw new ValidationException(ErrorCode.MAX_ACTIVE_GOALS,
+                    String.valueOf(goalRepository.countActiveGoalsPerUser(userId)));
         }
         goalDto.getSkillIds().forEach(skillId -> {
             if (!skillRepository.existsById(skillId)) {
