@@ -19,4 +19,3 @@ public class EventLocationFilter implements EventFilter {
         return events.filter(event -> event.getLocation().equalsIgnoreCase(eventFilterDto.getLocation()));
     }
 }
-
