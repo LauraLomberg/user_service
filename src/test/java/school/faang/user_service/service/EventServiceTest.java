@@ -42,6 +42,7 @@ public class EventServiceTest {
     private static final LocalDateTime END_DATE =
             LocalDateTime.of(2025, 5, 31, 15, 0);
     private static final String DATA_EXCEPTION_MESSAGE = "Некорректно введены даты события";
+    private static final String USER_NOT_FOUND_MESSAGE = "Пользователь не найден";
     private static final Long USER_ID = 1L;
     private static final Long EVENT_ID = 1L;
 
@@ -116,7 +117,7 @@ public class EventServiceTest {
         when(userRepository.findById(eventDto.getOwnerId())).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(DataValidationException.class, () -> eventService.create(eventDto));
-        assertEquals("Пользователь не найден", exception.getMessage());
+        assertEquals(USER_NOT_FOUND_MESSAGE, exception.getMessage());
     }
 
     @Test
@@ -220,7 +221,7 @@ public class EventServiceTest {
         when(userRepository.findById(USER_ID)).thenReturn(Optional.empty());
 
         Exception exception = assertThrows(DataValidationException.class, () -> eventService.updateEvent(eventDto));
-        assertEquals("Пользователь не найден", exception.getMessage());
+        assertEquals(USER_NOT_FOUND_MESSAGE, exception.getMessage());
     }
 
     @Test
