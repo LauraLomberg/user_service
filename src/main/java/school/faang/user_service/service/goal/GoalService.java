@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import school.faang.user_service.dto.goal.GoalDto;
 import school.faang.user_service.dto.goal.GoalFilterDto;
+import school.faang.user_service.entity.Skill;
 import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
 import school.faang.user_service.exception.ErrorCode;
@@ -15,6 +16,8 @@ import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.goal.GoalRepository;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -53,7 +56,9 @@ public class GoalService {
     @Transactional
     public List<GoalDto> findSubtasksByGoalId(Long goalId) {
         List<Goal> goals = goalRepository.findByParent(goalId).toList();
-        return goals.stream().map(goalMapper::toDto).toList();
+        return goals.stream()
+                .map(goalMapper::toDto)
+                .toList();
     }
 
     @Transactional
@@ -71,24 +76,32 @@ public class GoalService {
         if (goalDto.getTitle() == null || goalDto.getTitle().isBlank()) {
             throw new ValidationException(ErrorCode.GOAL_EMPTY_TITLE, String.valueOf(goalDto.getId()));
         }
-        if (goalRepository.countActiveGoalsPerUser(userId) > MAX_ACTIVE_GOALS) {
+        long countActiveGoals = goalRepository.countActiveGoalsPerUser(userId);
+        if (countActiveGoals > MAX_ACTIVE_GOALS) {
             throw new ValidationException(ErrorCode.MAX_ACTIVE_GOALS,
-                    String.valueOf(goalRepository.countActiveGoalsPerUser(userId)));
+                    String.valueOf(countActiveGoals));
         }
-        goalDto.getSkillIds().forEach(skillId -> {
-            if (!skillRepository.existsById(skillId)) {
-                throw new ValidationException(ErrorCode.GOAL_NON_EXISTING_SKILLS, skillId.toString());
-            }
-        });
+        List<Skill> existingSkills = skillRepository.findAllById(goalDto.getSkillIds());
+
+        Set<Long> nonExistingSkillIds = goalDto.getSkillIds().stream()
+                .filter(skillId -> existingSkills.stream()
+                        .noneMatch(skill -> skillId.equals(skill.getId())))
+                .collect(Collectors.toSet());
+
+        if (!nonExistingSkillIds.isEmpty()) {
+            throw new ValidationException(ErrorCode.GOAL_NON_EXISTING_SKILLS, nonExistingSkillIds.toString());
+        }
     }
 
-    private Goal findGoal(long goalId) {
+    private Goal findGoal(Long goalId) {
         return goalRepository.findById(goalId)
-                .orElseThrow(() -> new ValidationException(ErrorCode.GOAL_NOT_FOUND, String.valueOf(goalId)));
+                .orElseThrow(() -> new ValidationException(ErrorCode.GOAL_NOT_FOUND, goalId.toString()));
     }
 
     private void addSkillsToGoal(List<Long> skillIds, Long goalId) {
-        skillIds.forEach(skillId -> goalRepository.addSkillToGoal(skillId, goalId));
+        Goal goalForSkills = findGoal(goalId);
+        goalForSkills.getSkillsToAchieve().addAll(skillRepository.findAllById(skillIds));
+        goalRepository.save(goalForSkills);
     }
 
     private void updateSkills(GoalDto goalDto) {

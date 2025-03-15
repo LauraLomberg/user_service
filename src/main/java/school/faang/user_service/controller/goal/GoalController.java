@@ -2,7 +2,14 @@ package school.faang.user_service.controller.goal;
 
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestBody;
 import school.faang.user_service.dto.goal.GoalDto;
 import school.faang.user_service.dto.goal.GoalFilterDto;
 import school.faang.user_service.service.goal.GoalService;
@@ -15,13 +22,13 @@ import java.util.List;
 public class GoalController {
     private final GoalService goalService;
 
-    @PostMapping(value = "/create/{userId}")
-    public GoalDto createGoal(@NonNull @PathVariable("userId") Long userId, @NonNull GoalDto goal) {
+    @PostMapping(value = "/users/{userId}/goals")
+    public GoalDto createGoal(@NonNull @PathVariable("userId") Long userId, @NonNull @RequestBody GoalDto goal) {
         return goalService.createGoal(userId, goal);
     }
 
     @PutMapping(value = "/update/{goalId}")
-    public GoalDto updateGoal(@NonNull @PathVariable("goalId") Long goalId, @NonNull GoalDto goal) {
+    public GoalDto updateGoal(@NonNull @PathVariable("goalId") Long goalId, @NonNull @RequestBody GoalDto goal) {
         return goalService.updateGoal(goalId, goal);
     }
 
@@ -35,7 +42,7 @@ public class GoalController {
         return goalService.findSubtasksByGoalId(goalId);
     }
 
-    @GetMapping(value = "/goals/{userId}")
+    @GetMapping(value = "/users/{userId}/goals")
     public List<GoalDto> getGoalsByUser(@NonNull @PathVariable("userId") Long userId, @NonNull GoalFilterDto filter) {
         return goalService.getGoalsByUserId(userId, filter);
     }
