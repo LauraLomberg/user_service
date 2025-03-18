@@ -30,10 +30,9 @@ public class EventService {
     private final List<EventFilter> eventFilters;
 
     public EventDto create(EventDto eventDto) {
-        if (eventDto.getStartDate() != null && eventDto.getEndDate() != null
-                && eventDto.getStartDate().isAfter(eventDto.getEndDate())) {
-            log.warn("Некорректные даты события: startDate позже endDate");
-            throw new DataValidationException("Дата начала события не может быть позже даты окончания");
+        if (eventDto.getStartDate() == null || eventDto.getEndDate() == null ||
+                eventDto.getStartDate().isAfter(eventDto.getEndDate())) {
+            throw new DataValidationException("Некорректно введены даты события");
         }
         User owner = userRepository.findById(eventDto.getOwnerId())
                 .orElseThrow(() -> new DataValidationException("Пользователь не найден"));
