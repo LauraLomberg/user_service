@@ -27,17 +27,17 @@ public class GoalController {
         return goalService.createGoal(userId, goal);
     }
 
-    @PutMapping(value = "/update/{goalId}")
+    @PutMapping(value = "/goals/{goalId}")
     public GoalDto updateGoal(@NonNull @PathVariable("goalId") Long goalId, @NonNull @RequestBody GoalDto goal) {
         return goalService.updateGoal(goalId, goal);
     }
 
-    @DeleteMapping(value = "/delete/{goalId}")
+    @DeleteMapping(value = "/goals/{goalId}")
     public void deleteGoal(@NonNull @PathVariable("goalId") Long goalId) {
         goalService.deleteGoal(goalId);
     }
 
-    @GetMapping(value = "/subtasks/{goalId}")
+    @GetMapping(value = "/goals/{goalId}/subtasks")
     public List<GoalDto> findSubtasksByGoalId(@NonNull @PathVariable("goalId") Long goalId) {
         return goalService.findSubtasksByGoalId(goalId);
     }

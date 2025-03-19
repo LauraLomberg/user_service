@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import school.faang.user_service.entity.goal.GoalStatus;
 
 import java.util.List;
 
@@ -17,6 +16,6 @@ public class GoalDto {
     private String description;
     private Long parentId;
     private String title;
-    private GoalStatus status;
+    private GoalStatusDto status;
     private List<Long> skillIds;
 }
