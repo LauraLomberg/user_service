@@ -44,6 +44,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.getMentees(INVALID_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).getMentees(anyLong());
     }
@@ -51,15 +52,14 @@ public class MentorshipControllerTest {
     @Test
     @DisplayName("getMentees - successfully")
     public void testGetMenteesSuccessfully() {
-        long userId = FIRST_USER_ID;
         List<MentorshipUserDto> expectedMentees = List.of(new MentorshipUserDto(), new MentorshipUserDto());
-        when(mentorshipService.getMentees(userId)).thenReturn(expectedMentees);
+        when(mentorshipService.getMentees(FIRST_USER_ID)).thenReturn(expectedMentees);
 
-        List<MentorshipUserDto> actualMentees = mentorshipController.getMentees(userId);
+        List<MentorshipUserDto> actualMentees = mentorshipController.getMentees(FIRST_USER_ID);
 
         assertNotNull(actualMentees);
         assertEquals(expectedMentees, actualMentees);
-        verify(mentorshipService, times(1)).getMentees(userId);
+        verify(mentorshipService, times(1)).getMentees(FIRST_USER_ID);
     }
 
     @Test
@@ -69,6 +69,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.getMentors(INVALID_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).getMentees(anyLong());
     }
@@ -76,15 +77,14 @@ public class MentorshipControllerTest {
     @Test
     @DisplayName("getMentors - successfully")
     public void testGetMentorsSuccessfully() {
-        long userId = FIRST_USER_ID;
         List<MentorshipUserDto> expectedMentors = List.of(new MentorshipUserDto(), new MentorshipUserDto());
-        when(mentorshipService.getMentors(userId)).thenReturn(expectedMentors);
+        when(mentorshipService.getMentors(FIRST_USER_ID)).thenReturn(expectedMentors);
 
-        List<MentorshipUserDto> actualMentors = mentorshipController.getMentors(userId);
+        List<MentorshipUserDto> actualMentors = mentorshipController.getMentors(FIRST_USER_ID);
 
         assertNotNull(actualMentors);
         assertEquals(expectedMentors, actualMentors);
-        verify(mentorshipService, times(1)).getMentors(userId);
+        verify(mentorshipService, times(1)).getMentors(FIRST_USER_ID);
     }
 
     @Test
@@ -94,6 +94,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.deleteMentee(INVALID_USER_ID, SECOND_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).deleteMentee(anyLong(), anyLong());
     }
@@ -105,6 +106,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.deleteMentee(FIRST_USER_ID, INVALID_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).deleteMentee(anyLong(), anyLong());
     }
@@ -124,6 +126,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.deleteMentor(INVALID_USER_ID, SECOND_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).deleteMentor(anyLong(), anyLong());
     }
@@ -135,6 +138,7 @@ public class MentorshipControllerTest {
                 InvalidIdException.class,
                 () -> mentorshipController.deleteMentor(FIRST_USER_ID, INVALID_USER_ID)
         );
+
         assertEquals(INVALID_ID_MESSAGE, exception.getMessage());
         verify(mentorshipService, never()).deleteMentor(anyLong(), anyLong());
     }

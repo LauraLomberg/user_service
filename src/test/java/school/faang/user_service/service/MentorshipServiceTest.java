@@ -67,6 +67,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.getMentees(mentor.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentor.getId()),
                 exception.getMessage()
@@ -114,6 +115,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.getMentors(mentee.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentee.getId()),
                 exception.getMessage()
@@ -158,6 +160,7 @@ public class MentorshipServiceTest {
                 InvalidIdException.class,
                 () -> mentorshipService.deleteMentee(mentor.getId(), mentor.getId())
         );
+
         assertEquals(
                 ExceptionMessage.EQUAL_IDS.getMessage(),
                 exception.getMessage()
@@ -174,6 +177,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.deleteMentee(mentee.getId(), mentor.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentor.getId()),
                 exception.getMessage()
@@ -192,6 +196,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.deleteMentee(mentee.getId(), mentor.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentee.getId()),
                 exception.getMessage()
@@ -210,6 +215,7 @@ public class MentorshipServiceTest {
                 NoUserMenteeException.class,
                 () -> mentorshipService.deleteMentee(mentee.getId(), mentor.getId())
         );
+
         assertEquals(ExceptionMessage.NO_USER_MENTEE.getMessage(), exception.getMessage());
     }
 
@@ -236,6 +242,7 @@ public class MentorshipServiceTest {
                 InvalidIdException.class,
                 () -> mentorshipService.deleteMentor(mentee.getId(), mentee.getId())
         );
+
         assertEquals(
                 ExceptionMessage.EQUAL_IDS.getMessage(),
                 exception.getMessage()
@@ -252,6 +259,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.deleteMentor(mentee.getId(), mentor.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentor.getId()),
                 exception.getMessage()
@@ -270,6 +278,7 @@ public class MentorshipServiceTest {
                 UserNotFoundException.class,
                 () -> mentorshipService.deleteMentor(mentee.getId(), mentor.getId())
         );
+
         assertEquals(
                 String.format(ExceptionMessage.USER_NOT_FOUND.getMessage(), mentee.getId()),
                 exception.getMessage()
@@ -288,6 +297,7 @@ public class MentorshipServiceTest {
                 NoUserMentorException.class,
                 () -> mentorshipService.deleteMentor(mentee.getId(), mentor.getId())
         );
+
         assertEquals(ExceptionMessage.NO_USER_MENTOR.getMessage(), exception.getMessage());
     }
 
