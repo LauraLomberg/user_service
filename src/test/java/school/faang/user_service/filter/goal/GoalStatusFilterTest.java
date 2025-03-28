@@ -28,9 +28,8 @@ public class GoalStatusFilterTest {
     @Test
     public void testApplyOneActiveGoal() {
         Stream<Goal> goals = Stream.of(
-                Goal.builder()
-                        .title(null).status(GoalStatus.ACTIVE).build(),
-                        Goal.builder().title(null).status(GoalStatus.COMPLETED).build()
+                Goal.builder().title(null).status(GoalStatus.ACTIVE).build(),
+                Goal.builder().title(null).status(GoalStatus.COMPLETED).build()
         );
         List<Goal> goalList = goalStatusFilter.apply(goals, new GoalFilterDto(null, GoalStatus.ACTIVE)).toList();
 

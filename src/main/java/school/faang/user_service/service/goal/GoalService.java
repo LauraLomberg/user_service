@@ -10,7 +10,7 @@ import school.faang.user_service.entity.goal.Goal;
 import school.faang.user_service.entity.goal.GoalStatus;
 import school.faang.user_service.exception.ErrorCode;
 import school.faang.user_service.exception.ValidationException;
-import school.faang.user_service.filter.GoalFilter;
+import school.faang.user_service.filter.goal.GoalFilter;
 import school.faang.user_service.mapper.GoalMapper;
 import school.faang.user_service.repository.SkillRepository;
 import school.faang.user_service.repository.goal.GoalRepository;
