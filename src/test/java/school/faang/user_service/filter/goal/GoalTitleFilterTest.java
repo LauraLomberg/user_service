@@ -27,8 +27,7 @@ public class GoalTitleFilterTest {
     @Test
     public void testApplyOneTitle() {
         Stream<Goal> goals = Stream.of(
-                Goal.builder()
-                        .title("Title").status(null).build(),
+                Goal.builder().title("Title").status(null).build(),
                 Goal.builder().title("TitleTest").status(null).build()
         );
         List<Goal> goalList = goalTitleFilter.apply(goals, new GoalFilterDto("Title", null)).toList();

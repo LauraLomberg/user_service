@@ -31,12 +31,6 @@ import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 public class GoalServiceTest {
-    private static Skill firstSkill;
-    private static Skill secondSkill;
-    private static GoalDto goalDto;
-    private static Goal goalForSkills;
-    private static User firstUser;
-    private static User secondUser;
 
     private final GoalFilter goalStatusFilter = new TestGoalActiveStatusFilter();
     private final GoalFilter goalTitleFilter = new TestGoalTitleFilter();
@@ -48,6 +42,12 @@ public class GoalServiceTest {
     @Spy
     private GoalMapperImpl goalMapper;
     private GoalService goalService;
+    private Skill firstSkill;
+    private Skill secondSkill;
+    private GoalDto goalDto;
+    private Goal goalForSkills;
+    private User firstUser;
+    private User secondUser;
 
     @BeforeEach
     public void setUp() {
