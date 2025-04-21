@@ -1,5 +1,6 @@
 package school.faang.user_service.controller;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,12 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
+
+    @PostMapping("/{userId}/deactivation")
+    public ResponseEntity<String> deactivateUser(@Min(1) @PathVariable Long userId) {
+        userService.deactivateUser(userId);
+        return ResponseEntity.ok("User with ID " + userId + "is deactivated");
+    }
 
     @GetMapping("/{userId}")
     public ResponseEntity<UserDto> getUser(@PathVariable @Positive long userId) {

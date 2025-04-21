@@ -8,6 +8,8 @@ import java.util.Optional;
 
 public interface UserService {
 
+    void deactivateUser(Long userId);
+
     Optional<User> findUserById(long userId);
 
     UserDto getUserById(long userId);
@@ -15,4 +17,5 @@ public interface UserService {
     List<UserDto> getUsersByIds(List<Long> ids);
 
     void banUser(String userIdStr);
+  
 }
