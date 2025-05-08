@@ -24,6 +24,7 @@ spring:
       port: 6379
       host: localhost
       channel:
+        mentorship: mentorship_channel
         follower: follower_channel
         profile-pic: profile_pic_channel
         user-ban: user_ban_channel
@@ -45,4 +46,4 @@ payment-service:
 
 app:
   mentorship-request:
-    min-request-interval-in-months: 3 # Минимальный интервал между запросами (в месяцах)
+   min-request-interval-in-months: 3 # Минимальный интервал между запросами (в месяцах)
